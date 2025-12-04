@@ -4,9 +4,10 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sparkles, Mail, Lock, ArrowRight } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
+    const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -19,6 +20,8 @@ const Login = () => {
         setTimeout(() => {
             console.log("Login attempt with:", { email, password });
             setIsLoading(false);
+            // Navigate to profile page after successful login
+            navigate("/profile");
         }, 1500);
     };
 
@@ -147,9 +150,9 @@ const Login = () => {
                             {/* Sign Up Link */}
                             <div className="text-center text-sm">
                                 <span className="text-muted-foreground">ليس لديك حساب؟ </span>
-                                <a href="#" className="text-primary hover:underline font-medium">
+                                <Link to="/register" className="text-primary hover:underline font-medium">
                                     إنشاء حساب جديد
-                                </a>
+                                </Link>
                             </div>
 
                             {/* Back to Home */}

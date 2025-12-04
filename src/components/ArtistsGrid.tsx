@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -126,10 +127,12 @@ const ArtistsGrid = () => {
               </CardContent>
 
               <CardFooter>
-                <Button variant="default" className="w-full">
-                  <Calendar className="ml-2 h-4 w-4" />
-                  احجز الآن
-                </Button>
+                <Link to={`/booking/${artist.id}`} className="w-full">
+                  <Button variant="default" className="w-full">
+                    <Calendar className="ml-2 h-4 w-4" />
+                    احجز الآن
+                  </Button>
+                </Link>
               </CardFooter>
             </Card>
           ))}
