@@ -1,44 +1,85 @@
 import { Button } from "@/components/ui/button";
 import { Menu, Sparkles } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const scrollToSection = (sectionId: string) => {
+    // First navigate to home page
+    navigate("/");
+    // Close mobile menu if open
+    setIsMenuOpen(false);
+
+    // Wait for navigation to complete before scrolling
+    setTimeout(() => {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }, 100);
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-2">
+        <button
+          onClick={() => scrollToSection("home")}
+          className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+        >
           <Sparkles className="h-6 w-6 text-primary" />
           <span className="text-xl font-bold bg-gradient-hero bg-clip-text text-transparent">
             بوتيك الجمال
           </span>
-        </div>
+        </button>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
-          <a href="#home" className="text-sm font-medium hover:text-primary transition-colors">
+          <button
+            onClick={() => scrollToSection("home")}
+            className="text-sm font-medium hover:text-primary transition-colors"
+          >
             الرئيسية
-          </a>
-          <a href="#artists" className="text-sm font-medium hover:text-primary transition-colors">
+          </button>
+          <button
+            onClick={() => scrollToSection("artists")}
+            className="text-sm font-medium hover:text-primary transition-colors"
+          >
             الميكب آرتست
-          </a>
-          <a href="#spaces" className="text-sm font-medium hover:text-primary transition-colors">
+          </button>
+          <button
+            onClick={() => scrollToSection("spaces")}
+            className="text-sm font-medium hover:text-primary transition-colors"
+          >
             المساحات
-          </a>
-          <a href="#about" className="text-sm font-medium hover:text-primary transition-colors">
+          </button>
+          <button
+            onClick={() => scrollToSection("about")}
+            className="text-sm font-medium hover:text-primary transition-colors"
+          >
             من نحن
-          </a>
-          <a href="#contact" className="text-sm font-medium hover:text-primary transition-colors">
+          </button>
+          <button
+            onClick={() => scrollToSection("contact")}
+            className="text-sm font-medium hover:text-primary transition-colors"
+          >
             تواصل معنا
-          </a>
+          </button>
         </nav>
 
         <div className="flex items-center gap-3">
           <Link to="/login">
             <Button variant="ghost" className="hidden md:inline-flex">
               تسجيل الدخول
+            </Button>
+          </Link>
+          <Link to="/admin">
+            <Button variant="outline" className="hidden md:inline-flex">
+              الإدارة
             </Button>
           </Link>
           <Link to="/register">
@@ -61,25 +102,45 @@ const Header = () => {
       {isMenuOpen && (
         <div className="md:hidden border-t border-border bg-background">
           <nav className="container flex flex-col gap-4 py-4">
-            <a href="#home" className="text-sm font-medium hover:text-primary transition-colors">
+            <button
+              onClick={() => scrollToSection("home")}
+              className="text-sm font-medium hover:text-primary transition-colors text-right"
+            >
               الرئيسية
-            </a>
-            <a href="#artists" className="text-sm font-medium hover:text-primary transition-colors">
+            </button>
+            <button
+              onClick={() => scrollToSection("artists")}
+              className="text-sm font-medium hover:text-primary transition-colors text-right"
+            >
               الميكب آرتست
-            </a>
-            <a href="#spaces" className="text-sm font-medium hover:text-primary transition-colors">
+            </button>
+            <button
+              onClick={() => scrollToSection("spaces")}
+              className="text-sm font-medium hover:text-primary transition-colors text-right"
+            >
               المساحات
-            </a>
-            <a href="#about" className="text-sm font-medium hover:text-primary transition-colors">
+            </button>
+            <button
+              onClick={() => scrollToSection("about")}
+              className="text-sm font-medium hover:text-primary transition-colors text-right"
+            >
               من نحن
-            </a>
-            <a href="#contact" className="text-sm font-medium hover:text-primary transition-colors">
+            </button>
+            <button
+              onClick={() => scrollToSection("contact")}
+              className="text-sm font-medium hover:text-primary transition-colors text-right"
+            >
               تواصل معنا
-            </a>
+            </button>
             <div className="flex flex-col gap-2 pt-2">
               <Link to="/login" className="w-full">
                 <Button variant="ghost" className="w-full">
                   تسجيل الدخول
+                </Button>
+              </Link>
+              <Link to="/admin" className="w-full">
+                <Button variant="outline" className="w-full">
+                  الإدارة
                 </Button>
               </Link>
               <Link to="/register" className="w-full">

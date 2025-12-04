@@ -187,6 +187,14 @@ export const updateArtist = async (
     await updateDoc(artistRef, data);
 };
 
+/**
+ * Delete an artist
+ */
+export const deleteArtist = async (id: string): Promise<void> => {
+    const artistRef = doc(db, "artists", id);
+    await deleteDoc(artistRef);
+};
+
 // ===== Booking Functions =====
 
 /**
@@ -304,6 +312,14 @@ export const updateSpace = async (
 ): Promise<void> => {
     const spaceRef = doc(db, "spaces", id);
     await updateDoc(spaceRef, data);
+};
+
+/**
+ * Delete a space
+ */
+export const deleteSpace = async (id: string): Promise<void> => {
+    const spaceRef = doc(db, "spaces", id);
+    await deleteDoc(spaceRef);
 };
 
 // ===== Space Booking Functions =====

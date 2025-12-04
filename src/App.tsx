@@ -11,6 +11,7 @@ import RentSpace from "./pages/RentSpace";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import ArtistBooking from "./pages/ArtistBooking";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,6 +41,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <ArtistBooking />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute>
+                  <AdminDashboard />
                 </ProtectedRoute>
               }
             />

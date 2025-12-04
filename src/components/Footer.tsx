@@ -1,13 +1,37 @@
 import { Sparkles, Instagram, Twitter, Facebook, Mail, Phone, MapPin } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Footer = () => {
+  const navigate = useNavigate();
+
+  const scrollToSection = (sectionId: string) => {
+    // Navigate to home page first
+    navigate("/");
+
+    // Wait for navigation to complete, then scroll
+    setTimeout(() => {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      } else {
+        // If section not found, scroll to top
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }, 100);
+  };
+
+  const scrollToTop = () => {
+    navigate("/");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <footer className="bg-muted/50 border-t border-border">
       <div className="container py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 cursor-pointer" onClick={scrollToTop}>
               <Sparkles className="h-6 w-6 text-primary" />
               <span className="text-xl font-bold bg-gradient-hero bg-clip-text text-transparent">
                 بوتيك الجمال
@@ -34,24 +58,36 @@ const Footer = () => {
             <h3 className="font-semibold text-lg">روابط سريعة</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#home" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                <button
+                  onClick={scrollToTop}
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
                   الرئيسية
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#artists" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                <button
+                  onClick={() => scrollToSection("artists")}
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
                   الميكب آرتست
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#spaces" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                <button
+                  onClick={() => scrollToSection("spaces")}
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
                   المساحات
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#about" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                <button
+                  onClick={() => scrollToSection("about")}
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
                   من نحن
-                </a>
+                </button>
               </li>
             </ul>
           </div>
@@ -61,24 +97,30 @@ const Footer = () => {
             <h3 className="font-semibold text-lg">للمحترفين</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/register" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   انضم كميكب آرتست
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/rent-space" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   استأجر مساحة
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                <button
+                  onClick={scrollToTop}
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
                   الأسعار والباقات
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                <button
+                  onClick={scrollToTop}
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
                   الشروط والأحكام
-                </a>
+                </button>
               </li>
             </ul>
           </div>
