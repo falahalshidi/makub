@@ -77,11 +77,7 @@ const Header = () => {
               تسجيل الدخول
             </Button>
           </Link>
-          <Link to="/admin">
-            <Button variant="outline" className="hidden md:inline-flex">
-              الإدارة
-            </Button>
-          </Link>
+
           <Link to="/register">
             <Button variant="hero" className="hidden md:inline-flex">
               انضم الآن
@@ -138,11 +134,7 @@ const Header = () => {
                   تسجيل الدخول
                 </Button>
               </Link>
-              <Link to="/admin" className="w-full">
-                <Button variant="outline" className="w-full">
-                  الإدارة
-                </Button>
-              </Link>
+
               <Link to="/register" className="w-full">
                 <Button variant="hero" className="w-full">
                   انضم الآن

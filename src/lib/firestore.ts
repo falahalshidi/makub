@@ -21,7 +21,8 @@ export interface UserProfile {
     email: string;
     fullName: string;
     phone: string;
-    location: string;
+    location: string; // الولاية
+    governorate?: string; // المحافظة (optional للبيانات القديمة)
     accountType: "client" | "artist" | "owner";
     createdAt: Timestamp;
     updatedAt: Timestamp;

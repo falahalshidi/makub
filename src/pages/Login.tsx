@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signInUser } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
+import { isAdminUser } from "@/config/admin";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -21,12 +22,21 @@ const Login = () => {
 
         try {
             await signInUser(email, password);
-            toast({
-                title: "تم تسجيل الدخول بنجاح! 🎉",
-                description: "مرحباً بعودتك",
-            });
-            // Navigate to profile page after successful login
-            navigate("/profile");
+
+            // التحقق من أن المستخدم هو المدير
+            if (isAdminUser(email)) {
+                toast({
+                    title: "مرحباً بك في لوحة الإدارة! 👑",
+                    description: "تم تسجيل الدخول كمدير",
+                });
+                navigate("/admin");
+            } else {
+                toast({
+                    title: "تم تسجيل الدخول بنجاح! 🎉",
+                    description: "مرحباً بعودتك",
+                });
+                navigate("/profile");
+            }
         } catch (error: any) {
             toast({
                 title: "خطأ في تسجيل الدخول",

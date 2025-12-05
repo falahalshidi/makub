@@ -11,6 +11,7 @@ import { CheckCircle2, User, Mail, Phone, Lock, MapPin, Building2 } from "lucide
 import { useToast } from "@/hooks/use-toast";
 import { signUpUser } from "@/lib/auth";
 import { createUserProfile } from "@/lib/firestore";
+import { OMAN_GOVERNORATES, GovernorateKey } from "@/config/locations";
 
 const Register = () => {
     const navigate = useNavigate();
@@ -23,7 +24,8 @@ const Register = () => {
         phone: "",
         password: "",
         confirmPassword: "",
-        location: "",
+        governorate: "",
+        wilayat: "",
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -69,7 +71,8 @@ const Register = () => {
                 email: formData.email,
                 fullName: formData.fullName,
                 phone: formData.phone,
-                location: formData.location,
+                location: formData.wilayat, // حفظ الولاية
+                governorate: formData.governorate, // حفظ المحافظة
                 accountType: accountType as "client" | "artist" | "owner",
             });
 
@@ -78,7 +81,8 @@ const Register = () => {
                 description: "مرحباً بك في بوتيك الجمال",
             });
 
-            navigate("/login");
+            // المستخدم الآن مسجل دخول تلقائياً، توجيهه إلى الصفحة الرئيسية أو الملف الشخصي
+            navigate("/profile");
         } catch (error: any) {
             toast({
                 title: "خطأ في إنشاء الحساب",
@@ -186,26 +190,49 @@ const Register = () => {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="location">المنطقة</Label>
+                                    <Label htmlFor="governorate">المحافظة</Label>
                                     <div className="relative">
                                         <MapPin className="absolute right-3 top-3 h-4 w-4 text-muted-foreground z-10" />
-                                        <Select value={formData.location} onValueChange={(value) => handleChange("location", value)}>
+                                        <Select
+                                            value={formData.governorate}
+                                            onValueChange={(value) => {
+                                                handleChange("governorate", value);
+                                                // مسح الولاية عند تغيير المحافظة
+                                                handleChange("wilayat", "");
+                                            }}
+                                        >
                                             <SelectTrigger className="pr-10">
-                                                <SelectValue placeholder="اختر المنطقة" />
+                                                <SelectValue placeholder="اختر المحافظة" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="muscat">مسقط</SelectItem>
-                                                <SelectItem value="salalah">صلالة</SelectItem>
-                                                <SelectItem value="sohar">صحار</SelectItem>
-                                                <SelectItem value="nizwa">نزوى</SelectItem>
-                                                <SelectItem value="sur">صور</SelectItem>
-                                                <SelectItem value="buraimi">البريمي</SelectItem>
-                                                <SelectItem value="ibra">إبراء</SelectItem>
-                                                <SelectItem value="rustaq">الرستاق</SelectItem>
+                                                {Object.entries(OMAN_GOVERNORATES).map(([key, gov]) => (
+                                                    <SelectItem key={key} value={key}>{gov.name}</SelectItem>
+                                                ))}
                                             </SelectContent>
                                         </Select>
                                     </div>
                                 </div>
+
+                                {formData.governorate && (
+                                    <div className="space-y-2">
+                                        <Label htmlFor="wilayat">الولاية</Label>
+                                        <div className="relative">
+                                            <MapPin className="absolute right-3 top-3 h-4 w-4 text-muted-foreground z-10" />
+                                            <Select value={formData.wilayat} onValueChange={(value) => handleChange("wilayat", value)}>
+                                                <SelectTrigger className="pr-10">
+                                                    <SelectValue placeholder="اختر الولاية" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {OMAN_GOVERNORATES[formData.governorate as GovernorateKey].wilayats.map((wilayat) => (
+                                                        <SelectItem key={wilayat.value} value={wilayat.value}>
+                                                            {wilayat.name}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
+                                )}
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">

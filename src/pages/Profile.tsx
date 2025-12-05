@@ -53,27 +53,8 @@ const Profile = () => {
         }
     }, [userProfile]);
 
-    // سجل الحجوزات (مثال)
-    const bookings = [
-        {
-            id: 1,
-            artistName: "نورة العتيبي",
-            service: "ميكب عرائس",
-            date: "2024-12-15",
-            time: "14:00",
-            status: "مؤكد",
-            price: "45 ريال عماني",
-        },
-        {
-            id: 2,
-            artistName: "سارة البلوشي",
-            service: "ميكب سهرات",
-            date: "2024-11-20",
-            time: "18:00",
-            status: "مكتمل",
-            price: "35 ريال عماني",
-        },
-    ];
+    // سجل الحجوزات (سيتم تحميلها من Firebase)
+    const bookings: any[] = [];
 
     const handleSaveChanges = async () => {
         // Phone validation for Oman

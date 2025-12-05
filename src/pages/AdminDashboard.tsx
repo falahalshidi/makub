@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -9,31 +10,31 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import {
-    Palette, Building2, Calendar, Trash2, Plus, Edit,
-    Shield, LogOut, Search, Loader2, Lock
-} from "lucide-react";
-import { signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { Palette, Building2, Calendar, Trash2, Plus, Edit, Shield, LogOut, Search, Loader2 } from "lucide-react";
+import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import {
     getArtists, getSpaces, createArtist, createSpace,
     deleteArtist, deleteSpace, updateArtist, updateSpace, Artist, Space
 } from "@/lib/firestore";
 
-const OMANI_CITIES = [
-    "مسقط", "صلالة", "نزوى", "صحار", "صور", "البريمي", "الرستاق", "بهلاء", "إبراء", "السيب"
+const OMANI_GOVERNORATES = [
+    "محافظة مسقط",
+    "محافظة ظفار",
+    "محافظة مسندم",
+    "محافظة البريمي",
+    "محافظة الداخلية",
+    "محافظة شمال الباطنة",
+    "محافظة جنوب الباطنة",
+    "محافظة شمال الشرقية",
+    "محافظة جنوب الشرقية",
+    "محافظة الظاهرة",
+    "محافظة الوسطى"
 ];
-
-const ADMIN_EMAILS = ["admin@boutique-beauty.com", "admin@example.com"];
 
 const AdminDashboard = () => {
     const { toast } = useToast();
-
-    // Authentication state
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [loginEmail, setLoginEmail] = useState("");
-    const [loginPassword, setLoginPassword] = useState("");
-    const [loggingIn, setLoggingIn] = useState(false);
+    const navigate = useNavigate();
 
     // Data state
     const [artists, setArtists] = useState<Artist[]>([]);
@@ -69,69 +70,18 @@ const AdminDashboard = () => {
     });
 
     useEffect(() => {
-        // Check if user is already logged in
-        const unsubscribe = auth.onAuthStateChanged((user) => {
-            if (user && ADMIN_EMAILS.includes(user.email || "")) {
-                setIsAuthenticated(true);
-                loadData();
-            } else {
-                setIsAuthenticated(false);
-                setLoading(false);
-            }
-        });
-
-        return () => unsubscribe();
+        // المستخدم محمي بالفعل بواسطة AdminProtectedRoute
+        loadData();
     }, []);
-
-    const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        try {
-            setLoggingIn(true);
-
-            const userCredential = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
-
-            if (!ADMIN_EMAILS.includes(userCredential.user.email || "")) {
-                await signOut(auth);
-                toast({
-                    title: "غير مصرح",
-                    description: "ليس لديك صلاحيات الوصول لهذه الصفحة",
-                    variant: "destructive",
-                });
-                return;
-            }
-
-            setIsAuthenticated(true);
-            toast({
-                title: "مرحباً",
-                description: "تم تسجيل الدخول بنجاح",
-            });
-
-            loadData();
-        } catch (error: any) {
-            console.error("Login error:", error);
-            toast({
-                title: "خطأ في تسجيل الدخول",
-                description: error.code === "auth/invalid-credential"
-                    ? "البريد الإلكتروني أو كلمة المرور غير صحيحة"
-                    : "حدث خطأ أثناء تسجيل الدخول",
-                variant: "destructive",
-            });
-        } finally {
-            setLoggingIn(false);
-        }
-    };
 
     const handleLogout = async () => {
         try {
             await signOut(auth);
-            setIsAuthenticated(false);
-            setArtists([]);
-            setSpaces([]);
             toast({
                 title: "تم تسجيل الخروج",
                 description: "تم تسجيل الخروج بنجاح",
             });
+            navigate("/login");
         } catch (error) {
             console.error("Logout error:", error);
         }
@@ -400,6 +350,7 @@ const AdminDashboard = () => {
         }
     };
 
+
     const filteredArtists = artists.filter(artist =>
         artist.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         artist.specialty.toLowerCase().includes(searchTerm.toLowerCase())
@@ -409,66 +360,6 @@ const AdminDashboard = () => {
         space.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         space.location.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
-    // Login Screen
-    if (!isAuthenticated) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-secondary/5">
-                <Card className="w-full max-w-md mx-4">
-                    <CardHeader className="space-y-3 text-center">
-                        <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                            <Shield className="h-8 w-8 text-primary" />
-                        </div>
-                        <CardTitle className="text-2xl">لوحة تحكم الإدارة</CardTitle>
-                        <CardDescription>
-                            قم بتسجيل الدخول للوصول إلى لوحة التحكم
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <form onSubmit={handleLogin} className="space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="email">البريد الإلكتروني</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    placeholder="admin@boutique-beauty.com"
-                                    value={loginEmail}
-                                    onChange={(e) => setLoginEmail(e.target.value)}
-                                    required
-                                    disabled={loggingIn}
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="password">كلمة المرور</Label>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    placeholder="••••••••"
-                                    value={loginPassword}
-                                    onChange={(e) => setLoginPassword(e.target.value)}
-                                    required
-                                    disabled={loggingIn}
-                                />
-                            </div>
-                            <Button type="submit" className="w-full" disabled={loggingIn}>
-                                {loggingIn ? (
-                                    <>
-                                        <Loader2 className="h-4 w-4 ml-2 animate-spin" />
-                                        جاري تسجيل الدخول...
-                                    </>
-                                ) : (
-                                    <>
-                                        <Lock className="h-4 w-4 ml-2" />
-                                        تسجيل الدخول
-                                    </>
-                                )}
-                            </Button>
-                        </form>
-                    </CardContent>
-                </Card>
-            </div>
-        );
-    }
 
     // Loading Screen
     if (loading) {
@@ -779,8 +670,8 @@ const AdminDashboard = () => {
                                     <SelectValue placeholder="اختر المنطقة" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {OMANI_CITIES.map((city) => (
-                                        <SelectItem key={city} value={city}>{city}</SelectItem>
+                                    {OMANI_GOVERNORATES.map((governorate) => (
+                                        <SelectItem key={governorate} value={governorate}>{governorate}</SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
@@ -871,8 +762,8 @@ const AdminDashboard = () => {
                                     <SelectValue placeholder="اختر المنطقة" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {OMANI_CITIES.map((city) => (
-                                        <SelectItem key={city} value={city}>{city}</SelectItem>
+                                    {OMANI_GOVERNORATES.map((governorate) => (
+                                        <SelectItem key={governorate} value={governorate}>{governorate}</SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
@@ -954,8 +845,8 @@ const AdminDashboard = () => {
                                     <SelectValue placeholder="اختر المنطقة" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {OMANI_CITIES.map((city) => (
-                                        <SelectItem key={city} value={city}>{city}</SelectItem>
+                                    {OMANI_GOVERNORATES.map((governorate) => (
+                                        <SelectItem key={governorate} value={governorate}>{governorate}</SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
@@ -1037,8 +928,8 @@ const AdminDashboard = () => {
                                     <SelectValue placeholder="اختر المنطقة" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {OMANI_CITIES.map((city) => (
-                                        <SelectItem key={city} value={city}>{city}</SelectItem>
+                                    {OMANI_GOVERNORATES.map((governorate) => (
+                                        <SelectItem key={governorate} value={governorate}>{governorate}</SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
